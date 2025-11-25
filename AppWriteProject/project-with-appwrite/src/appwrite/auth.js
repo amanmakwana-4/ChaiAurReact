@@ -59,7 +59,6 @@
 // PRODUCTION READY, future-proof authentication service
 // preserves your original naming + adds comments on changes
 // -------------------------------------------------------------
-
 import conf from "../conf/conf";
 import { Client, Account, ID } from "appwrite";
 
@@ -78,16 +77,14 @@ class AuthError extends Error {
 // Helper: Input Validators
 // ---------------------------
 const Validators = {
-    // Added: Strong email validator
+    // Strong email validator
     email(email) {
         const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return pattern.test(email);
     },
 
-    // Added: Full password policy enforcement (your requirement)
+    // Full password policy
     password(password) {
-        // Apply ALL rules:
-        // min 8 chars, upper, lower, digit, special char
         const min = password.length >= 8;
         const upper = /[A-Z]/.test(password);
         const lower = /[a-z]/.test(password);
@@ -97,7 +94,7 @@ const Validators = {
         return min && upper && lower && digit && special;
     },
 
-    // Added: Name should not be empty
+    // Name must not be empty
     name(name) {
         return typeof name === "string" && name.trim().length > 0;
     }
@@ -108,7 +105,7 @@ export class AuthService {
     account;
 
     constructor() {
-        // Added: Environment safety checks
+        // Environment safety checks
         if (!conf.appwriteUrl || !conf.appwriteProjectId) {
             console.error("Environment configuration missing", conf);
             throw new AuthError("Invalid environment configuration", "ENV_CONFIG_ERROR");
@@ -125,7 +122,7 @@ export class AuthService {
     // createAccount — PRODUCTION READY VERSION
     // ---------------------------------------------------------
     async createAccount({ email, password, name }) {
-        // Added: Strong validation before hitting backend
+        // Strong validation
         if (!Validators.email(email)) {
             console.error("Invalid email format");
             throw new AuthError("Invalid email format", "INVALID_EMAIL");
@@ -149,14 +146,13 @@ export class AuthService {
                 name
             );
 
-            // Added: enforce email verification workflow
-            await this.account.createVerification(conf.appwriteVerificationUrl);
+            // Email verification removed (you requested removal)
 
-            // Your choice: Auto-login after signup
+            // Auto-login after signup
             return this.login({ email, password });
 
         } catch (error) {
-            console.error("createAccount error:", error); // your requirement #6
+            console.error("createAccount error:", error);
             throw new AuthError("Failed to create account", "ACCOUNT_CREATE_FAILED", error);
         }
     }
@@ -176,7 +172,7 @@ export class AuthService {
         }
 
         try {
-            // Your choice: Allow multiple sessions (do not delete others)
+            // Multiple sessions allowed
             return await this.account.createEmailSession(email, password);
 
         } catch (error) {
@@ -202,9 +198,8 @@ export class AuthService {
     // ---------------------------------------------------------
     async logout() {
         try {
-            // NOTE: You selected "allow multiple sessions"
-            // so we ONLY delete the current session, not all.
-            return await this.account.deleteSessions();
+            // Multiple sessions allowed → delete only current session
+            return await this.account.deleteSession("current");
         } catch (error) {
             console.error("logout error:", error);
             throw new AuthError("Logout failed", "LOGOUT_FAILED", error);
@@ -215,3 +210,4 @@ export class AuthService {
 // Singleton (unchanged)
 const authService = new AuthService();
 export default authService;
+
