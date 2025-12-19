@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux"
-import SearchBar from "./components/SearchBar"
-import Loader from "./components/Loader"
-import WeatherCard from "./components/WeatherCard"
+import SearchBar from "./components/SearchBar.jsx"
+import Loader from "./components/Loader.jsx"
+import WeatherCard from "./components/WeatherCard.jsx"
 import './App.css'
-import Error from "./components/Error"
+import Error from "./components/Error.jsx"
 function App() {
   const status = useSelector((state)=>state.weather.status)
   
