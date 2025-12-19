@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {useDispatch} from 'react-redux'
-import { getWeather } from "../features/wheatherFeature/WheatherSlice.jsx";
+import { getWeather } from "../features/weatherFeature/WeatherSlice";
 import '../App.css'
 export default function SearchBar(){
     const [city,setCity]=useState("")
